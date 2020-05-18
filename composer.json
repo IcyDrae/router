@@ -1,0 +1,15 @@
+{
+    "name": "r-gjoni/t-routing",
+    "description": "Minimal routing package",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Route\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "require": {}
+}
