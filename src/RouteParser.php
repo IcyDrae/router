@@ -20,22 +20,33 @@ class RouteParser implements RouteParserInterface
 
     /**
      * @param String $route
+     * @return array
      */
-    public function parse(String $route)
+    public function parse(String $route): array
     {
-        $pattern = "/\//";
-        # note: regex101: ^[a-z]+\/{[a-z]+}$
-        $array = preg_split($pattern, $route);
+        $pattern = "/^\/?([a-z]+)?\/([a-zA-Z0-9]+)?$/";
+        $matches = [];
 
-        var_dump($array);
+        $operation = preg_match_all($pattern, $route, $matches);
 
-        // TODO: optional parameters such as: /this/route/{id}
+        $fullMatch = [
+            "full_path" =>  json_encode($matches[0], JSON_UNESCAPED_SLASHES)
+        ];
+
+        $parsedRoute = [
+            "base" => json_encode($matches[1]),
+            "argument" => json_encode($matches[2])
+        ];
+
+        return $parsedRoute;
+
+        // TODO: optional parameters such as: /this/{id}
     }
 }
 
 
 if (php_sapi_name() === 'cli') {
-    $parser = new RouteParser("this/{route}");
+    $parser = new RouteParser("/user/12");
 
     return $parser;
 }

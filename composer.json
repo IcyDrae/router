@@ -11,5 +11,7 @@
     "config": {
         "optimize-autoloader": true
     },
-    "require": {}
+    "require": {
+      "ext-json": "*"
+    }
 }
