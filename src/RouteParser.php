@@ -24,29 +24,33 @@ class RouteParser implements RouteParserInterface
      */
     public function parse(String $route): array
     {
-        $pattern = "/^\/?([a-z]+)?\/([a-zA-Z0-9]+)?$/";
+        $parsedRoute = [];
         $matches = [];
+        $pattern = "/\/[a-z]*\/*[a-z0-9]+/";
 
-        $operation = preg_match_all($pattern, $route, $matches);
+        preg_match_all($pattern, $route, $matches);
 
-        $fullMatch = [
-            "full_path" =>  json_encode($matches[0], JSON_UNESCAPED_SLASHES)
-        ];
+        foreach ($matches[0] as $value => $match) {
+            /**
+             * /users/1 -> [
+             *              ["users", "1"],
+             *            ]
+             */
+            $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);
 
-        $parsedRoute = [
-            "base" => json_encode($matches[1]),
-            "argument" => json_encode($matches[2])
-        ];
+            $parsedRoute[] = [
+              "base" => $split[0],
+              "argument" => (!empty($split[1]) ? $split[1] : "")
+            ];
+        }
 
         return $parsedRoute;
-
-        // TODO: optional parameters such as: /this/{id}
     }
 }
 
 
 if (php_sapi_name() === 'cli') {
-    $parser = new RouteParser("/user/12");
+    $parser = new RouteParser("/users/1/playlist/2/songs");
 
     return $parser;
 }
