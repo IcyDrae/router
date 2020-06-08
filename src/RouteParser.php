@@ -32,8 +32,9 @@ class RouteParser implements RouteParserInterface
 
         foreach ($matches[0] as $value => $match) {
             /**
-             * /users/1 -> [
+             * /users/1/group/2 -> [
              *              ["users", "1"],
+             *              ["group", "2"],
              *            ]
              */
             $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);
@@ -44,13 +45,13 @@ class RouteParser implements RouteParserInterface
             ];
         }
 
-        return $parsedRoute;
+        var_dump($parsedRoute);
     }
 }
 
 
-if (php_sapi_name() === 'cli') {
+/*if (php_sapi_name() === 'cli') {
     $parser = new RouteParser("/users/1/playlist/2/songs");
 
     return $parser;
-}
+}*/
