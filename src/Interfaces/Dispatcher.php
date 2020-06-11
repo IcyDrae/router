@@ -10,5 +10,5 @@ interface Dispatcher
      * @param $string
      * @return mixed
      */
-    public function getRoute($string);
+    public function dispatch($string);
 }

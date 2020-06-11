@@ -45,7 +45,7 @@ class RouteParser implements RouteParserInterface
             ];
         }
 
-        var_dump($parsedRoute);
+        return $parsedRoute;
     }
 }
 

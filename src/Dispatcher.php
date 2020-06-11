@@ -19,15 +19,15 @@ class Dispatcher implements DispatcherInterface
     {
         $this->collector = $routeCollector;
 
-        if ($routeCollector instanceof RouteCollector) {
-            echo ($routeCollector);
+        if (!$routeCollector instanceof RouteCollector) {
+            return;
         }
     }
 
     /**
      * @inheritDoc
      */
-    public function getRoute($string)
+    public function dispatch($string)
     {
         // TODO: Implement getRoute() method.
     }
@@ -35,8 +35,8 @@ class Dispatcher implements DispatcherInterface
 
 if (php_sapi_name() == 'cli') {
     $dispatch = new Dispatcher(function(RouteCollector $routeCollector) {
-        $routeCollector->get("route/slash");
+        $routeCollector->get("/user/id");
     });
 
-    echo ($dispatch);
+    var_dump($dispatch);
 }

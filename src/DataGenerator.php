@@ -29,7 +29,8 @@ class DataGenerator implements DataGeneratorInterface
 }
 
 if (php_sapi_name() === 'cli') {
-    $parser = new DataGenerator;
+    $parser = new RouteParser("/user/111");
+    $generator = new DataGenerator;
 
     return $parser;
 }
