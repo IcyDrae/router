@@ -4,39 +4,29 @@ namespace Route;
 
 require_once(__DIR__ . "./../vendor/autoload.php");
 
-use Route\Exception\InvalidRouteException;
 use Route\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {
-    private $collector;
-
-    /**
-     * Dispatcher constructor.
-     * @param callable $routeCollector
-     */
-    public function __construct(callable $routeCollector)
+    public function __construct(callable $collector)
     {
-        $this->collector = $routeCollector;
-
-        if (!$routeCollector instanceof RouteCollector) {
-            return;
-        }
+        return $collector;
     }
 
     /**
      * @inheritDoc
      */
-    public function dispatch($string)
+    public function dispatch()
     {
         // TODO: Implement getRoute() method.
+        echo "dispatching";
     }
 }
 
 if (php_sapi_name() == 'cli') {
-    $dispatch = new Dispatcher(function(RouteCollector $routeCollector) {
-        $routeCollector->get("/user/id");
+    $dispatcher = new Dispatcher(function (RouteCollector $route) {
+        $route->addRoute(["GET", "/users/3452"]);
     });
 
-    var_dump($dispatch);
+    $dispatcher->dispatch();
 }

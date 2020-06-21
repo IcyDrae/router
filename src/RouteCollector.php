@@ -6,19 +6,29 @@ require_once(__DIR__ . "./../vendor/autoload.php");
 
 class RouteCollector
 {
-    private $routeParser;
-    private $dataGenerator;
+    // TODO: search how to do dynamic methods to have: get, post, put etc available
 
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
+    /*public function __construct($route)
     {
-        $this->routeParser = $routeParser;
-        $this->dataGenerator = $dataGenerator;
+        $routeParser = new RouteParser($route);
+        $dataGenerator = new DataGenerator($routeParser);
+
+        return $dataGenerator->getData(); # not really
+    }*/
+
+    /**
+     * @param array $route
+     * @return DataGenerator
+     */
+    public function addRoute(array $route)
+    {
+        $parse = new RouteParser($route[1]);
+        $generate = new DataGenerator($parse);
+
+        return $generate;
     }
 
-    public function get($route) {
-        $parser = new RouteParser($route);
-        $generator = new DataGenerator($parser);
-
-        return $generator;
+    public function get(array $route) {
+        echo $route;
     }
 }
