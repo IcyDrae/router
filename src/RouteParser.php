@@ -32,9 +32,9 @@ class RouteParser implements RouteParserInterface
 
         foreach ($matches[0] as $value => $match) {
             /**
-             * /users/1/group/2 -> [
-             *              ["users", "1"],
-             *              ["group", "2"],
+             * /users/id/category/id -> [
+             *              ["users", "id"],
+             *              ["group", "id"],
              *            ]
              */
             $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);

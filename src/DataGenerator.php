@@ -10,27 +10,24 @@ use Route\Interfaces\DataGenerator as DataGeneratorInterface;
 class DataGenerator implements DataGeneratorInterface
 {
 
-    public function __construct()
+    /*public function __construct($parsed)
     {
-        $this->addRoute();
+        $this->addRoute($parsed);
+    }*/
+
+    public function addRoute($parsed)
+    {
+        $this->getData($parsed);
     }
 
-    public function addRoute()
+    public function getData($parser)
     {
-        $this->getData();
-    }
-
-    public function getData()
-    {
-        $parser = new RouteParser("/user/111");
-
         return $parser;
     }
 }
 
-if (php_sapi_name() === 'cli') {
-    $parser = new RouteParser("/user/111");
-    $generator = new DataGenerator;
+/*if (php_sapi_name() === 'cli') {
+    $dataGen = new DataGenerator($parsed);
 
-    return $parser;
-}
+    return $dataGen;
+}*/

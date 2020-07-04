@@ -28,5 +28,5 @@ if (php_sapi_name() == 'cli') {
         $route->addRoute(["GET", "/users/3452"]);
     });
 
-    $dispatcher->dispatch();
+    $dispatcher->dispatch(); # should dispatch the contents of L#28(addRoute array). How?
 }

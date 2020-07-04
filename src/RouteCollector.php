@@ -22,8 +22,10 @@ class RouteCollector
      */
     public function addRoute(array $route)
     {
-        $parse = new RouteParser($route[1]);
-        $generate = new DataGenerator($parse);
+        $routeParsed = new RouteParser($route[1]);
+        $generate = new DataGenerator();
+
+        $generate->addRoute($routeParsed);
 
         return $generate;
     }
@@ -31,4 +33,10 @@ class RouteCollector
     public function get(array $route) {
         echo $route;
     }
+}
+
+if (php_sapi_name() == 'cli') {
+    $cl = new RouteCollector();
+
+    $cl->addRoute(["GET", "/user/id/group/id"]);
 }
