@@ -2,6 +2,8 @@
 
 namespace Route;
 
+use MongoDB\BSON\ObjectIdInterface;
+
 require_once(__DIR__ . "./../vendor/autoload.php");
 
 class RouteCollector
@@ -17,17 +19,22 @@ class RouteCollector
     }*/
 
     /**
+     * Used as part of the workflow inside Dispatcher
+     *
+     * Makes use of the RouteCollector & DataGenerator and returns the parsed data
+     *
      * @param array $route
-     * @return DataGenerator
+     * @return array
      */
-    public function addRoute(array $route)
+    public function addRoute(array $route): array
     {
-        $routeParsed = new RouteParser($route[1]);
+        $parser = new RouteParser;
+        $routeParsed = $parser->parse($route[1]);
+
         $generate = new DataGenerator();
 
         $generate->addRoute($routeParsed);
-
-        return $generate;
+        return $generate->getData();
     }
 
     public function get(array $route) {

@@ -23,10 +23,10 @@ class Dispatcher implements DispatcherInterface
     }
 }
 
-if (php_sapi_name() == 'cli') {
+/*if (php_sapi_name() == 'cli') {
     $dispatcher = new Dispatcher(function (RouteCollector $route) {
         $route->addRoute(["GET", "/users/3452"]);
     });
 
     $dispatcher->dispatch(); # should dispatch the contents of L#28(addRoute array). How?
-}
+}*/

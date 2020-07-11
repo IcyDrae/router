@@ -9,20 +9,24 @@ use Route\Interfaces\RouteParser as RouteParserInterface;
 
 class RouteParser implements RouteParserInterface
 {
-    private $route;
+    private array $parsedRoute;
 
-    public function __construct($route)
+    /**
+     * RouteParser constructor.
+     */
+    public function __construct()
     {
-        $this->route = $route;
-
-        $this->parse($route);
     }
 
     /**
-     * @param String $route
+     * Parses a given string into an array containing a series of arrays per route group
+     *
+     * Accepted format is: "/users", "/user/id/", "/user/id/groups" "/user/id/group/id/"
+     *
+     * @param string $route
      * @return array
      */
-    public function parse(String $route): array
+    public function parse(string $route): array
     {
         $parsedRoute = [];
         $matches = [];
@@ -34,7 +38,7 @@ class RouteParser implements RouteParserInterface
             /**
              * /users/id/category/id -> [
              *              ["users", "id"],
-             *              ["group", "id"],
+             *              ["category", "id"],
              *            ]
              */
             $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);
@@ -44,14 +48,8 @@ class RouteParser implements RouteParserInterface
               "argument" => (!empty($split[1]) ? $split[1] : "")
             ];
         }
+        $this->parsedRoute = $parsedRoute;
 
-        return $parsedRoute;
+        return $this->parsedRoute;
     }
 }
-
-
-/*if (php_sapi_name() === 'cli') {
-    $parser = new RouteParser("/users/1/playlist/2/songs");
-
-    return $parser;
-}*/

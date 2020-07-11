@@ -6,6 +6,6 @@ namespace Route\Interfaces;
 
 interface DataGenerator
 {
-    public function addRoute($parsed);
-    public function getData($parser);
+    public function addRoute(array $parsed);
+    public function getData(): array;
 }
