@@ -3,8 +3,6 @@
 
 namespace Route;
 
-require_once(__DIR__ . "./../vendor/autoload.php");
-
 use Route\Interfaces\DataGenerator as DataGeneratorInterface;
 
 class DataGenerator implements DataGeneratorInterface

@@ -1,32 +1,41 @@
 <?php
-
 namespace Route;
-
-require_once(__DIR__ . "./../vendor/autoload.php");
 
 use Route\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {
-    public function __construct(callable $collector)
-    {
-        return $collector;
-    }
-
     /**
      * @inheritDoc
      */
-    public function dispatch()
+    public function dispatch(array $parsed, $handler, $map)
     {
-        // TODO: Implement getRoute() method.
-        echo "dispatching";
+        # If the handler is a controller & method
+        if (is_string($handler)) {
+            # Use mapper to search for classes
+            #var_dump(class_exists("$map\TestController"));
+
+            # Split handler using character
+            $splitHandler = explode("@", "$handler@");
+            $controller = $splitHandler[0];
+
+            # Was the method passed?
+            if ($splitHandler[1]) {
+                $method = $splitHandler[1];
+
+                var_dump($method);
+            } else {
+                return "Method did not get called.";
+            }
+
+            // TODO find classes in namespace and dispatch
+
+        }
+
+        # If the handler is a callback
+        if (is_callable($handler)) {
+            call_user_func($handler);
+        }
+
     }
 }
-
-/*if (php_sapi_name() == 'cli') {
-    $dispatcher = new Dispatcher(function (RouteCollector $route) {
-        $route->addRoute(["GET", "/users/3452"]);
-    });
-
-    $dispatcher->dispatch(); # should dispatch the contents of L#28(addRoute array). How?
-}*/

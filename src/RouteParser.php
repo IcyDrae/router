@@ -3,8 +3,6 @@
 
 namespace Route;
 
-require_once(__DIR__ . "./../vendor/autoload.php");
-
 use Route\Interfaces\RouteParser as RouteParserInterface;
 
 class RouteParser implements RouteParserInterface
@@ -44,8 +42,8 @@ class RouteParser implements RouteParserInterface
             $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);
 
             $parsedRoute[] = [
-              "base" => $split[0],
-              "argument" => (!empty($split[1]) ? $split[1] : "")
+                "base" => $split[0],
+                "argument" => (!empty($split[1]) ? $split[1] : NULL)
             ];
         }
         $this->parsedRoute = $parsedRoute;

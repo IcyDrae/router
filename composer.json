@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Route\\": "src/"
+            "Route\\": "src/",
+            "Test\\": "test/"
         }
     },
     "config": {
