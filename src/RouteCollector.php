@@ -5,9 +5,9 @@ namespace Route;
 class RouteCollector
 {
     /**
-     * Used as part of the workflow inside Dispatcher
+     * Used as part of the workflow in the Router
      *
-     * Makes use of the RouteCollector & DataGenerator and returns the parsed data
+     * Makes use of the RouteParser & DataGenerator and returns the parsed data
      *
      * @param string $route
      * @return array

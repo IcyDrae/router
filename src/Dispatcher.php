@@ -1,6 +1,9 @@
 <?php
+
 namespace Route;
 
+use Route\Exception\ClassNotFoundException;
+use Route\Exception\MethodNotCalledException;
 use Route\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
@@ -13,23 +16,29 @@ class Dispatcher implements DispatcherInterface
         # If the handler is a controller & method
         if (is_string($handler)) {
             # Use mapper to search for classes
-            #var_dump(class_exists("$map\TestController"));
 
             # Split handler using character
-            $splitHandler = explode("@", "$handler@");
+            $splitHandler = preg_split("/[@]/", $handler, 2, PREG_SPLIT_NO_EMPTY); # Limited at two, split using @
+
             $controller = $splitHandler[0];
 
             # Was the method passed?
-            if ($splitHandler[1]) {
+            if (isset($splitHandler[1])) {
                 $method = $splitHandler[1];
 
-                var_dump($method);
+                if (class_exists("$map\\$controller")) {
+                    $class = "$map\\$controller";
+
+                    $class = new $class();
+
+                    call_user_func(array($class, "$method"));
+                } else {
+                    throw new ClassNotFoundException;
+                }
+
             } else {
-                return "Method did not get called.";
+                throw new MethodNotCalledException;
             }
-
-            // TODO find classes in namespace and dispatch
-
         }
 
         # If the handler is a callback

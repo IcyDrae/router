@@ -1,16 +1,18 @@
 {
-    "name": "r-gjoni/t-routing",
+    "name": "rgj/routing",
     "description": "Minimal routing package",
     "type": "library",
+    "authors": [
+        {
+            "name": "Reard Gjoni",
+            "email": "reard.gjoni97@hotmail.co.uk"
+        }
+    ],
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Route\\": "src/",
-            "Test\\": "test/"
+            "Route\\": "src/"
         }
-    },
-    "config": {
-        "optimize-autoloader": true
     },
     "require": {
       "ext-json": "*"

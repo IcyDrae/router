@@ -3,6 +3,9 @@
 
 namespace Route;
 
+use Route\Exception\MethodNotCalledException;
+use Route\Exception\ClassNotFoundException;
+
 /*
  * Change architecture: Router should be the entry point(should take the route)
                             -> gives it to the route collector and give the parsed back
@@ -30,9 +33,6 @@ class Router
         $collector = new RouteCollector;
         $parsed = $collector->addRoute($handler[0]);
 
-        # Define namespace for the dispatcher
-        self::setMap("\Test\Controllers");
-
         # Handle the (parsed)route and the callback
         self::handle($parsed, $handler[1], self::getMap());
     }
@@ -41,13 +41,19 @@ class Router
     {
         $dispatcher = new Dispatcher;
 
-        $dispatcher->dispatch($parsed, $handler, $map);
+        try {
+            $dispatcher->dispatch($parsed, $handler, $map);
+        } catch (ClassNotFoundException $exception) {
+            echo $exception;
+        } catch (MethodNotCalledException $exception) {
+            echo $exception;
+        }
     }
 
     /**
      * @param string $map
      */
-    private static function setMap(string $map): void
+    public static function setMap(string $map): void
     {
         self::$map = $map;
     }
