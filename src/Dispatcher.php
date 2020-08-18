@@ -41,7 +41,7 @@ class Dispatcher implements DispatcherInterface
                     $class = "$map\\$controller";
                     $class = new $class();
 
-                    $call = ($this->argument ? call_user_func_array(array($class, "$method"), array($this->argument)) : call_user_func(array($class, "$method")));
+                    ($this->argument ? call_user_func_array(array($class, "$method"), array($this->argument)) : call_user_func(array($class, "$method")));
                 } else {
                     throw new ClassNotFoundException;
                 }
