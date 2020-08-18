@@ -21,7 +21,7 @@ class RouteParser implements RouteParserInterface
     {
         $parsedRoute = [];
         $matches = [];
-        $pattern = "/\/([a-z]+)(\/{[a-z]+})*/";
+        $pattern = "/\/([a-z]+)(\/{[a-zA-Z]+})*/";
 
         preg_match_all($pattern, $route, $matches);
 

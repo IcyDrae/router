@@ -8,18 +8,29 @@ use Route\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {
+    private $argument;
+
     /**
      * @inheritDoc
      */
     public function dispatch(array $parsed, $handler, $map)
     {
+        # Check if an argument was passed in the router
+        foreach ($parsed as $routeGroup) {
+            extract($routeGroup);
+
+            /** @var string|null $argument */
+            if (isset($argument)) {
+                $this->argument = $argument;
+            }
+        }
+
         # If the handler is a controller & method
         if (is_string($handler)) {
             # Use mapper to search for classes
 
-            # Split handler using character
-            $splitHandler = preg_split("/[@]/", $handler, 2, PREG_SPLIT_NO_EMPTY); # Limited at two, split using @
-
+            # Split handler on @- limited at two
+            $splitHandler = preg_split("/[@]/", $handler, 2, PREG_SPLIT_NO_EMPTY);
             $controller = $splitHandler[0];
 
             # Was the method passed?
@@ -28,14 +39,12 @@ class Dispatcher implements DispatcherInterface
 
                 if (class_exists("$map\\$controller")) {
                     $class = "$map\\$controller";
-
                     $class = new $class();
 
-                    call_user_func(array($class, "$method"));
+                    $call = ($this->argument ? call_user_func_array(array($class, "$method"), array($this->argument)) : call_user_func(array($class, "$method")));
                 } else {
                     throw new ClassNotFoundException;
                 }
-
             } else {
                 throw new MethodNotCalledException;
             }
@@ -43,8 +52,7 @@ class Dispatcher implements DispatcherInterface
 
         # If the handler is a callback
         if (is_callable($handler)) {
-            call_user_func($handler);
+            ($this->argument ? call_user_func_array($handler, array($this->argument)) : call_user_func($handler));
         }
-
     }
 }
