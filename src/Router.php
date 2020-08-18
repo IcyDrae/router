@@ -6,16 +6,6 @@ namespace Route;
 use Route\Exception\MethodNotCalledException;
 use Route\Exception\ClassNotFoundException;
 
-/*
- * Change architecture: Router should be the entry point(should take the route)
-                            -> gives it to the route collector and give the parsed back
-                            -> dispatcher dispatches that request into the project
-
-    Note: Route should have the dynamic request methods
-
-    Note 2: Dispatcher can take the generated data from the DataGenerator as described from the document
-*/
-
 /**
  * @method static Router get(string $route, callable|string $handler)
  * @method static Router post(string $route, callable|string $handler)

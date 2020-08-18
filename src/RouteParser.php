@@ -10,16 +10,9 @@ class RouteParser implements RouteParserInterface
     private array $parsedRoute;
 
     /**
-     * RouteParser constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Parses a given string into an array containing a series of arrays per route group
      *
-     * Accepted format is: "/users", "/user/id/", "/user/id/groups" "/user/id/group/id/"
+     * Accepted format is: "/users", "/user/{id}", "/user/{id}/groups" "/user/{id}/group/{id}"
      *
      * @param string $route
      * @return array
@@ -28,23 +21,25 @@ class RouteParser implements RouteParserInterface
     {
         $parsedRoute = [];
         $matches = [];
-        $pattern = "/\/[a-z]*\/*[a-z0-9]+/";
+        $pattern = "/\/([a-z]+)(\/{[a-z]+})*/";
 
         preg_match_all($pattern, $route, $matches);
 
-        foreach ($matches[0] as $value => $match) {
+        foreach ($matches[0] as $key => $match) {
+
             /**
-             * /users/id/category/id -> [
+             * /users/{id}/category/{id} -> [
              *              ["users", "id"],
              *              ["category", "id"],
              *            ]
              */
-            $split = preg_split('/\//', $match, NULL, PREG_SPLIT_NO_EMPTY);
+            $split = preg_split('/[\/{}]/', $match, NULL, PREG_SPLIT_NO_EMPTY);
 
             $parsedRoute[] = [
                 "base" => $split[0],
                 "argument" => (!empty($split[1]) ? $split[1] : NULL)
             ];
+
         }
         $this->parsedRoute = $parsedRoute;
 
