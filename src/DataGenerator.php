@@ -8,6 +8,8 @@ use Route\Interfaces\DataGenerator as DataGeneratorInterface;
 class DataGenerator implements DataGeneratorInterface
 {
 
+    # TODO: static and dynamic route generation through the DataGenerator
+
     private array $parsed;
 
     /**

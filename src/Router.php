@@ -3,6 +3,8 @@
 
 namespace Route;
 
+use Route\Exception\MethodNotAllowedException;
+use Route\Exception\InvalidRouteException;
 use Route\Exception\MethodNotCalledException;
 use Route\Exception\ClassNotFoundException;
 
@@ -15,18 +17,65 @@ use Route\Exception\ClassNotFoundException;
 
 class Router
 {
-    private static string $map;
+    private static string $map = "App\Controllers"; # Default mapping
+    private static array $parsed;
+    private static string $route;
+    private static string $method;
+    private static $handler;
 
-    public static function __callstatic($method, $handler)
+    /**
+     * @param $method
+     * @param $handler
+     * @return string|void
+     */
+    public static function __callStatic($method, $handler)
     {
         # Take the route given and give it to the RouteCollector- will return it parsed as an array
         $collector = new RouteCollector;
-        $parsed = $collector->addRoute($handler[0]);
+        self::$parsed = $collector->addRoute($handler[0]);
+        self::$handler = $handler[1];
+        self::$route = $handler[0];
 
-        # Handle the (parsed)route and the callback
-        self::handle($parsed, $handler[1], self::getMap());
+        self::filterRequest($method, self::$route);
     }
 
+    /**
+     * @param $method
+     * @param $route
+     * @return MethodNotAllowedException|InvalidRouteException|void
+     */
+    private static function filterRequest($method, $route) {
+        $requestUri = $_SERVER["REQUEST_URI"];
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+
+        $singleSlashesUri = preg_replace("/\/+/", "/", $requestUri);
+
+        $uri = trim($singleSlashesUri, "/");
+        $route = trim($route, "/");
+
+        $method = strtoupper($method);
+
+        #TODO handle HEAD requests
+
+        #var_dump($route);
+        if ($uri == $route) {
+            if ($requestMethod == $method) {
+                # Handle the (parsed)route and the callback
+                self::handle(self::$parsed, self::$handler, self::getMap());
+            } else {
+                return new MethodNotAllowedException;
+            }
+        } else {
+            return new InvalidRouteException;
+        }
+    }
+
+    /**
+     * @param $parsed
+     * @param $handler
+     * @param $map
+     * @return ClassNotFoundException|MethodNotCalledException|void
+     */
     private static function handle($parsed, $handler, $map)
     {
         $dispatcher = new Dispatcher;
@@ -34,9 +83,9 @@ class Router
         try {
             $dispatcher->dispatch($parsed, $handler, $map);
         } catch (ClassNotFoundException $exception) {
-            echo $exception;
+            return $exception;
         } catch (MethodNotCalledException $exception) {
-            echo $exception;
+            return $exception;
         }
     }
 
