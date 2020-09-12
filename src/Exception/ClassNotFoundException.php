@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Route\Exception;
+namespace Gjoni\Router\Exception;
 
 use Exception;
 use Throwable;

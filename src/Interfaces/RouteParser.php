@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Route\Interfaces;
+namespace Gjoni\Router\Interfaces;
 
 
 interface RouteParser

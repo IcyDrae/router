@@ -1,10 +1,10 @@
 <?php
 
-namespace Route;
+namespace Gjoni\Router;
 
-use Route\Exception\ClassNotFoundException;
-use Route\Exception\MethodNotCalledException;
-use Route\Interfaces\Dispatcher as DispatcherInterface;
+use Gjoni\Router\Exception\ClassNotFoundException;
+use Gjoni\Router\Exception\MethodNotCalledException;
+use Gjoni\Router\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {

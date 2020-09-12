@@ -1,6 +1,6 @@
 <?php
 
-namespace Route;
+namespace Gjoni\Router;
 
 class RouteCollector
 {

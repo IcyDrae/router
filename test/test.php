@@ -1,6 +1,6 @@
 <?php
 
-use Route\Router;
+use Gjoni\Router\Router;
 
 require_once __DIR__ . "./../vendor/autoload.php";
 

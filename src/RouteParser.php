@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Route;
+namespace Gjoni\Router;
 
-use Route\Interfaces\RouteParser as RouteParserInterface;
+use Gjoni\Router\Interfaces\RouteParser as RouteParserInterface;
 
 class RouteParser implements RouteParserInterface
 {

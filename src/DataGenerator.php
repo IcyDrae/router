@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Route;
+namespace Gjoni\Router;
 
-use Route\Interfaces\DataGenerator as DataGeneratorInterface;
+use Gjoni\Router\Interfaces\DataGenerator as DataGeneratorInterface;
 
 class DataGenerator implements DataGeneratorInterface
 {
@@ -25,6 +25,11 @@ class DataGenerator implements DataGeneratorInterface
      */
     public function getData(): array
     {
+        /*if ($this->isStaticRoute($this->parsed)) {
+            $this->generateStatic();
+        } elseif($this->isDynamicRoute($this->parsed)) {
+            $this->generateDynamic();
+        }*/
         return $this->getParsed();
     }
 
@@ -42,5 +47,28 @@ class DataGenerator implements DataGeneratorInterface
     public function setParsed(array $parsed)
     {
         $this->parsed = $parsed;
+    }
+
+    public function isStaticRoute($parsed)
+    {
+
+    }
+
+    public function isDynamicRoute($parsed)
+    {
+
+    }
+
+    private function generateStatic()
+    {
+        /*$parsedRoute[] = [
+                "base" => $split[0],
+                "argument" => (!empty($split[1]) ? $split[1] : NULL)
+            ];*/
+    }
+
+    private function generateDynamic()
+    {
+
     }
 }

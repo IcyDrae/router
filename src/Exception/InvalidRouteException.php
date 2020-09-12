@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Route\Exception;
+namespace Gjoni\Router\Exception;
 
 use Exception;
 use Throwable;
@@ -9,7 +9,7 @@ use Throwable;
 
 class InvalidRouteException extends Exception
 {
-    public function __construct($message = "", $code = 405, Throwable $previous = null)
+    public function __construct($message = "", $code = 404, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 

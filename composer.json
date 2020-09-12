@@ -1,5 +1,5 @@
 {
-    "name": "rgj/routing",
+    "name": "rgjoni/router",
     "description": "Minimal routing package",
     "type": "library",
     "authors": [
@@ -11,7 +11,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Route\\": "src/"
+            "Gjoni\\Router\\": "src/"
         }
     },
     "require": {
