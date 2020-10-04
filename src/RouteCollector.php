@@ -2,6 +2,8 @@
 
 namespace Gjoni\Router;
 
+use Gjoni\Router\Exception\InvalidRouteException;
+
 class RouteCollector
 {
     /**
@@ -10,12 +12,13 @@ class RouteCollector
      * Makes use of the RouteParser & DataGenerator and returns the parsed data
      *
      * @param string $route
+     * @param string $uri
      * @return array
      */
-    public function addRoute(string $route): array
+    public function addRoute(string $route, string $uri)
     {
         $parser = new RouteParser;
-        $routeParsed = $parser->parse($route);
+        $routeParsed = $parser->parse($route, $uri);
 
         $generator = new DataGenerator;
 

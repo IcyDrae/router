@@ -8,13 +8,14 @@ use Gjoni\Router\Exception\ClassNotFoundException;
 
 interface Dispatcher
 {
+    public const NOT_FOUND = 0;
+    public const FOUND = 1;
+
     /**
-     * @param array $parsed
-     * @param callable|string $handler
-     * @param string $map
+     * @param array $routerInput
      * @return mixed
      * @throws MethodNotCalledException
      * @throws ClassNotFoundException
      */
-    public function dispatch(array $parsed, $handler, $map);
+    public function dispatch(array $routerInput);
 }

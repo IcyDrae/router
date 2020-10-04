@@ -7,42 +7,33 @@ use Gjoni\Router\Interfaces\RouteParser as RouteParserInterface;
 
 class RouteParser implements RouteParserInterface
 {
-    private array $parsedRoute;
-
     /**
-     * Parses a given string into an array containing a series of arrays per route group
+     * Parses a given string into an array containing either the route(s) split by "/" or the arguments with their name as the key
      *
      * Accepted format is: "/users", "/user/{id}", "/user/{id}/groups" "/user/{id}/group/{id}"
      *
      * @param string $route
+     * @param string $uri
      * @return array
      */
-    public function parse(string $route): array
+    public function parse(string $route, string $uri): array
     {
-        $parsedRoute = [];
-        $matches = [];
-        $pattern = "/\/([a-z]+)(\/{[a-zA-Z]+})*/";
+        # Base route parsing pattern
+        $allowedCharacters = "[a-zA-Z0-9\_]+";
 
-        preg_match_all($pattern, $route, $matches);
+        # Swap the route annotation with it's corresponding pattern so it can be verified against in the Router
+        $pattern = preg_replace("/{($allowedCharacters)}/",
+                            "(?<$1>$allowedCharacters)", $route);
 
-        foreach ($matches[0] as $key => $match) {
+        $regex = "@^$pattern$@D";
 
-            /**
-             * /users/{id}/category/{id} -> [
-             *              ["users", "id"],
-             *              ["category", "id"],
-             *            ]
-             */
-            $split = preg_split('/[\/{}]/', $match, NULL, PREG_SPLIT_NO_EMPTY);
+        preg_match($regex, $uri, $matches);
 
-            $parsedRoute[] = [
-                "base" => $split[0],
-                "argument" => (!empty($split[1]) ? $split[1] : NULL)
-            ];
-
+        # Handle static routes
+        if (!empty($matches) && !isset($matches[1])) {
+            $matches = preg_split('/[\/]/', $matches[0], NULL, PREG_SPLIT_NO_EMPTY);
         }
-        $this->parsedRoute = $parsedRoute;
 
-        return $this->parsedRoute;
+        return $matches;
     }
 }

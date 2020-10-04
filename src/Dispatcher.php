@@ -4,55 +4,82 @@ namespace Gjoni\Router;
 
 use Gjoni\Router\Exception\ClassNotFoundException;
 use Gjoni\Router\Exception\MethodNotCalledException;
+use Gjoni\Router\Exception\MethodNotAllowedException;
 use Gjoni\Router\Interfaces\Dispatcher as DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {
-    private $argument;
+    private ?array $argument;
 
     /**
      * @inheritDoc
      */
-    public function dispatch(array $parsed, $handler, $map)
+    public function dispatch(array $routerInput)
     {
-        # Check if an argument was passed in the router
-        foreach ($parsed as $routeGroup) {
-            extract($routeGroup);
-
-            /** @var string|null $argument */
-            if (isset($argument)) {
-                $this->argument = $argument;
-            }
+        # Was there a match?
+        if (empty($routerInput["parsed"])) {
+            return self::NOT_FOUND;
         }
 
-        # If the handler is a controller & method
-        if (is_string($handler)) {
-            # Use mapper to search for classes
+        # If yes, does the method correspond?
+        if ($routerInput["route_method"] == $routerInput["request_method"]) {
 
-            # Split handler on @- limited at two
-            $splitHandler = preg_split("/[@]/", $handler, 2, PREG_SPLIT_NO_EMPTY);
-            $controller = $splitHandler[0];
+            foreach ($routerInput["parsed"] as $routeGroup) {
+                # Check if dynamic route
+                if (isset($routerInput["parsed"]["dynamic"])) {
+                    $this->argument = $routeGroup["params"];
+                }
+            }
 
-            # Was the method passed?
-            if (isset($splitHandler[1])) {
-                $method = $splitHandler[1];
+            # If the handler is a controller & method
+            if (is_string($routerInput["handler"])) {
+                $this->dispatchClass($routerInput);
+            } elseif (is_callable($routerInput["handler"])) { # If the handler is a callback
+                 $this->dispatchCallable($routerInput);
+            }
 
-                if (class_exists("$map\\$controller")) {
-                    $class = "$map\\$controller";
-                    $class = new $class();
+            return self::FOUND;
+        } else {
+            http_response_code(405);
 
-                    ($this->argument ? call_user_func_array(array($class, "$method"), array($this->argument)) : call_user_func(array($class, "$method")));
+            return [
+                "exception" => new MethodNotAllowedException()
+            ];
+        }
+    }
+
+    private function dispatchClass($routerInput) {
+        # Split handler on @- limited at two
+        $splitHandler = preg_split("/[@]/", $routerInput["handler"], 2, PREG_SPLIT_NO_EMPTY);
+        $controller = $splitHandler[0];
+
+        # Was the method passed?
+        if (isset($splitHandler[1])) {
+            $method = $splitHandler[1];
+            $map = $routerInput["map"];
+
+            if (class_exists("$map\\$controller")) {
+                $class = "$map\\$controller";
+                $class = new $class();
+
+                if (!empty($this->argument)) {
+                    call_user_func_array(array($class, "$method"), $this->argument);
                 } else {
-                    throw new ClassNotFoundException;
+                    call_user_func(array($class, "$method"));
                 }
             } else {
-                throw new MethodNotCalledException;
+                throw new ClassNotFoundException;
             }
+        } else {
+            throw new MethodNotCalledException;
         }
+    }
 
-        # If the handler is a callback
-        if (is_callable($handler)) {
-            ($this->argument ? call_user_func_array($handler, array($this->argument)) : call_user_func($handler));
+    private function dispatchCallable($routerInput) {
+        if (!empty($this->argument)) {
+            call_user_func_array($routerInput["handler"], $this->argument);
+        } else {
+            call_user_func($routerInput["handler"]);
         }
     }
 }

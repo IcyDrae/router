@@ -3,27 +3,27 @@
 
 namespace Gjoni\Router;
 
-use Gjoni\Router\Exception\MethodNotAllowedException;
+use Closure;
 use Gjoni\Router\Exception\InvalidRouteException;
 use Gjoni\Router\Exception\MethodNotCalledException;
 use Gjoni\Router\Exception\ClassNotFoundException;
 
 /**
- * @method static Router get(string $route, callable|string $handler)
- * @method static Router post(string $route, callable|string $handler)
- * @method static Router put(string $route, callable|string $handler)
- * @method static Router patch(string $route, callable|string $handler)
- * @method static Router delete(string $route, callable|string $handler)
+ * @method static Router get(string $route, Closure|string $handler)
+ * @method static Router post(string $route, Closure|string $handler)
+ * @method static Router put(string $route, Closure|string $handler)
+ * @method static Router patch(string $route, Closure|string $handler)
+ * @method static Router delete(string $route, Closure|string $handler)
  */
 
 class Router
 {
     private static string $map = "App\Controllers"; # Default mapping
     private static array $parsed;
-    private static string $route;
     private static array $methods = [];
     private static array $routes = [];
     private static array $handlers = [];
+    private static int $dispatcherValue;
 
     /**
      * @param $method
@@ -37,76 +37,77 @@ class Router
         array_push(self::$handlers, $handler);
     }
 
-    /**
-     * TODO dynamic route parsing URL
-     * TODO static/dynamic route generation in the DataGenerator
-     */
-
     public static function run() {
-        self::filterRequest();
+        self::beforeHandle();
     }
 
     /**
-     * @return MethodNotAllowedException|InvalidRouteException|bool|void
+     * @return array $request
      */
     private static function filterRequest() {
         $requestUri = $_SERVER["REQUEST_URI"];
-        $requestMethod = $_SERVER["REQUEST_METHOD"];
-
+        $requestMethod = strtolower($_SERVER["REQUEST_METHOD"]);
         $uri = preg_replace("/\/+/", "/", $requestUri);
 
-        $routeKeys = array_keys(self::$routes, $uri);
-        $routeExists = false;
+        return $request = [
+            "method" => $requestMethod,
+            "uri" => $uri
+        ];
+    }
 
-        foreach ($routeKeys as $key) {
-            $method = strtoupper(self::$methods[$key]);
-            # A route corresponding to the request exists at this point
-            $routeExists = true;
-            $route = self::$routes[$key];
+    /**
+     * @return bool|void|InvalidRouteException[]
+     */
+    private static function beforeHandle()
+    {
+        $pos = 0;
 
-            # Handle HEAD requests and match them to available GET routes
-            if ($requestMethod == "HEAD" && $method == "GET") {
-                $method = "HEAD";
+        foreach (self::$routes as $route) {
+            # Pass the route to the RouteCollector- will return it parsed as an array
+            $collector = new RouteCollector;
+            self::$parsed = $collector->addRoute($route, self::filterRequest()["uri"]);
+
+            $handler = self::$handlers[$pos][1];
+            $input = [
+                "parsed" => self::$parsed,
+                "handler" => $handler,
+                "map" => self::getMap(),
+                "route_method" => self::$methods[$pos],
+                "request_method" => self::filterRequest()["method"]
+            ];
+
+            # Call the handler- which then passes the data to the dispatcher
+            self::handle($input);
+
+            if (self::$dispatcherValue == 1) {
+                break;
             }
 
-            if ($method == $requestMethod) {
-                # Pass the route to the RouteCollector- will return it parsed as an array
-                $collector = new RouteCollector;
-                self::$parsed = $collector->addRoute($route);
-                $handler = self::$handlers[$key][1];
-
-                # Call the handler- which then passes the data to the dispatcher
-                self::handle(self::$parsed, $handler, self::getMap());
-            } else {
-                http_response_code(405);
-
-                return new MethodNotAllowedException;
+            # If we're at the last position and still haven't found a route, it means this route is not defined in our application
+            if ($pos == array_key_last(self::$routes) && self::$dispatcherValue == 0) {
+                return [
+                    "exception" => new InvalidRouteException()
+                ];
             }
-        }
 
-        if (!$routeExists) {
-            http_response_code(404);
-
-            return new InvalidRouteException;
+            ++$pos;
         }
     }
 
     /**
-     * @param $parsed
-     * @param $handler
-     * @param $map
-     * @return ClassNotFoundException|MethodNotCalledException|void
+     * @param $input
+     * @return ClassNotFoundException[]|MethodNotCalledException[]|void
      */
-    private static function handle($parsed, $handler, $map)
+    private static function handle($input)
     {
         $dispatcher = new Dispatcher;
 
         try {
-            $dispatcher->dispatch($parsed, $handler, $map);
+            self::$dispatcherValue = $dispatcher->dispatch($input);
         } catch (ClassNotFoundException $exception) {
-            return $exception;
+            return [$exception];
         } catch (MethodNotCalledException $exception) {
-            return $exception;
+            return [$exception];
         }
     }
 
