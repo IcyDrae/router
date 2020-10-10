@@ -7,10 +7,10 @@ namespace Gjoni\Router\Interfaces;
 interface DataGenerator
 {
     /**
-     * @param array $route
+     * @param array|int $route
      * @return mixed
      */
-    public function addRoute(array $route);
+    public function addRoute($route);
 
     /**
      * @return array|string

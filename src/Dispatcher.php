@@ -40,11 +40,14 @@ class Dispatcher implements DispatcherInterface
 
             return self::FOUND;
         } else {
+            header('Content-type:application/json;charset=utf-8');
             http_response_code(405);
 
-            return [
-                "exception" => new MethodNotAllowedException()
-            ];
+            $e = new MethodNotAllowedException();
+            echo json_encode([
+                "exception" => $e->getMessage()
+            ]);
+            exit();
         }
     }
 

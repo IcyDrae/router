@@ -19,7 +19,7 @@ use Gjoni\Router\Exception\ClassNotFoundException;
 class Router
 {
     private static string $map = "App\Controllers"; # Default mapping
-    private static array $parsed;
+    private static $parsed;
     private static array $methods = [];
     private static array $routes = [];
     private static array $handlers = [];
@@ -73,6 +73,13 @@ class Router
             $collector = new RouteCollector;
             self::$parsed = $collector->addRoute($route, self::$request["uri"]);
 
+            if (self::$parsed["error"]) {
+                header('Content-type:application/json;charset=utf-8');
+                http_response_code(400);
+                echo self::$parsed;
+                exit();
+            }
+
             $handler = self::$handlers[$pos][1];
             $input = [
                 "parsed" => self::$parsed,
@@ -91,10 +98,13 @@ class Router
 
             # If we're at the last position and still haven't found a route, it means this route is not defined in our application
             if ($pos == array_key_last(self::$routes) && self::$dispatcherValue == 0) {
+                header('Content-type:application/json;charset=utf-8');
                 http_response_code(404);
-                return [
-                    "exception" => new InvalidRouteException()
-                ];
+                $e = new InvalidRouteException();
+                echo json_encode([
+                    "error" => $e->getMessage()
+                ]);
+                exit();
             }
 
             ++$pos;
@@ -112,9 +122,17 @@ class Router
         try {
             self::$dispatcherValue = $dispatcher->dispatch($input);
         } catch (ClassNotFoundException $exception) {
-            return [$exception];
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode([
+                "error" => $exception->getMessage()
+            ]);
+            exit();
         } catch (MethodNotCalledException $exception) {
-            return [$exception];
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode([
+                "error" => $exception->getMessage()
+            ]);
+            exit();
         }
     }
 

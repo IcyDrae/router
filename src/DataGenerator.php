@@ -7,12 +7,12 @@ use Gjoni\Router\Interfaces\DataGenerator as DataGeneratorInterface;
 
 class DataGenerator implements DataGeneratorInterface
 {
-    private array $parsed;
+    private $parsed;
 
     /**
-     * @param array $route
+     * @inheritDoc
      */
-    public function addRoute(array $route)
+    public function addRoute($route)
     {
         return $this->setParsed($route);
     }
@@ -22,6 +22,12 @@ class DataGenerator implements DataGeneratorInterface
      */
     public function getData()
     {
+        if ($this->isBadUrl()) {
+            return json_encode(
+                ["error" => "Not accepted characters in URL"]
+            );
+        }
+
         if ($this->isDynamicRoute()) {
             return $this->generateDynamic();
         } elseif ($this->isStaticRoute()) {
@@ -40,11 +46,19 @@ class DataGenerator implements DataGeneratorInterface
     }
 
     /**
-     * @param array $parsed
+     * @param array|int $parsed
      */
-    public function setParsed(array $parsed)
+    public function setParsed($parsed)
     {
         $this->parsed = $parsed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBadUrl()
+    {
+        return is_int($this->parsed);
     }
 
     /**

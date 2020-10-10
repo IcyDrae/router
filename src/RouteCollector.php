@@ -2,7 +2,6 @@
 
 namespace Gjoni\Router;
 
-use Gjoni\Router\Exception\InvalidRouteException;
 
 class RouteCollector
 {

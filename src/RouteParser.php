@@ -14,12 +14,16 @@ class RouteParser implements RouteParserInterface
      *
      * @param string $route
      * @param string $uri
-     * @return array
+     * @return array|int
      */
-    public function parse(string $route, string $uri): array
+    public function parse(string $route, string $uri)
     {
         # Base route parsing pattern
         $allowedCharacters = "[a-zA-Z0-9\_]+";
+
+        if (preg_match("/[^-:\/a-zA-Z\d]/", $uri, $matches)) {
+            return self::NOT_ALLOWED_CHARS;
+        }
 
         # Swap the route annotation with it's corresponding pattern so it can be verified against in the Router
         $pattern = preg_replace("/{($allowedCharacters)}/",
