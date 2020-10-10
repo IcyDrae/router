@@ -21,7 +21,6 @@ class Dispatcher implements DispatcherInterface
             return self::NOT_FOUND;
         }
 
-        # TODO HEAD requests- look at old commit
         # If yes, does the method correspond?
         if ($routerInput["route_method"] == $routerInput["request_method"]) {
 
