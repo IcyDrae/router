@@ -23,6 +23,7 @@ class Router
     private static array $methods = [];
     private static array $routes = [];
     private static array $handlers = [];
+    private static array $request = [];
     private static int $dispatcherValue;
 
     /**
@@ -42,14 +43,18 @@ class Router
     }
 
     /**
-     * @return array $request
+     * Sets request property
      */
     private static function filterRequest() {
         $requestUri = $_SERVER["REQUEST_URI"];
-        $requestMethod = strtolower($_SERVER["REQUEST_METHOD"]);
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
         $uri = preg_replace("/\/+/", "/", $requestUri);
 
-        return $request = [
+        if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
+            $requestMethod = "GET";
+        }
+
+        self::$request = [
             "method" => $requestMethod,
             "uri" => $uri
         ];
@@ -63,9 +68,10 @@ class Router
         $pos = 0;
 
         foreach (self::$routes as $route) {
+            self::filterRequest();
             # Pass the route to the RouteCollector- will return it parsed as an array
             $collector = new RouteCollector;
-            self::$parsed = $collector->addRoute($route, self::filterRequest()["uri"]);
+            self::$parsed = $collector->addRoute($route, self::$request["uri"]);
 
             $handler = self::$handlers[$pos][1];
             $input = [
@@ -73,7 +79,7 @@ class Router
                 "handler" => $handler,
                 "map" => self::getMap(),
                 "route_method" => self::$methods[$pos],
-                "request_method" => self::filterRequest()["method"]
+                "request_method" => strtolower(self::$request["method"])
             ];
 
             # Call the handler- which then passes the data to the dispatcher
@@ -85,6 +91,7 @@ class Router
 
             # If we're at the last position and still haven't found a route, it means this route is not defined in our application
             if ($pos == array_key_last(self::$routes) && self::$dispatcherValue == 0) {
+                http_response_code(404);
                 return [
                     "exception" => new InvalidRouteException()
                 ];
