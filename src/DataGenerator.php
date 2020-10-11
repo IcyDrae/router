@@ -3,7 +3,7 @@
 
 namespace Gjoni\Router;
 
-use Gjoni\Router\Interfaces\DataGenerator as DataGeneratorInterface;
+use Gjoni\Router\Interfaces\DataGeneratorInterface;
 
 class DataGenerator implements DataGeneratorInterface
 {

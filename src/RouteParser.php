@@ -3,7 +3,7 @@
 
 namespace Gjoni\Router;
 
-use Gjoni\Router\Interfaces\RouteParser as RouteParserInterface;
+use Gjoni\Router\Interfaces\RouteParserInterface;
 
 class RouteParser implements RouteParserInterface
 {

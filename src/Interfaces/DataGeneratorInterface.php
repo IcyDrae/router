@@ -4,7 +4,7 @@
 namespace Gjoni\Router\Interfaces;
 
 
-interface DataGenerator
+interface DataGeneratorInterface
 {
     /**
      * @param array|int $route

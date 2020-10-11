@@ -6,7 +6,7 @@ namespace Gjoni\Router\Interfaces;
 use Gjoni\Router\Exception\MethodNotCalledException;
 use Gjoni\Router\Exception\ClassNotFoundException;
 
-interface Dispatcher
+interface DispatcherInterface
 {
     public const NOT_FOUND = 0;
     public const FOUND = 1;

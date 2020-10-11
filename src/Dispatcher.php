@@ -5,7 +5,7 @@ namespace Gjoni\Router;
 use Gjoni\Router\Exception\ClassNotFoundException;
 use Gjoni\Router\Exception\MethodNotCalledException;
 use Gjoni\Router\Exception\MethodNotAllowedException;
-use Gjoni\Router\Interfaces\Dispatcher as DispatcherInterface;
+use Gjoni\Router\Interfaces\DispatcherInterface;
 
 class Dispatcher implements DispatcherInterface
 {

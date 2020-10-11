@@ -4,7 +4,7 @@
 namespace Gjoni\Router\Interfaces;
 
 
-interface RouteParser
+interface RouteParserInterface
 {
     public const NOT_ALLOWED_CHARS = 0;
 
