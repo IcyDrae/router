@@ -25,6 +25,7 @@ class Router
     private static array $handlers = [];
     private static array $request = [];
     private static int $dispatcherValue;
+    private static string $baseRoute = "";
 
     /**
      * @param $method
@@ -33,6 +34,10 @@ class Router
      */
     public static function __callStatic($method, $handler)
     {
+        if (!empty(self::$baseRoute)) {
+            $handler[0] = self::$baseRoute . "/" . $handler[0];
+        }
+
         array_push(self::$methods, $method);
         array_push(self::$routes, $handler[0]);
         array_push(self::$handlers, $handler);
@@ -112,8 +117,31 @@ class Router
     }
 
     /**
+     * The route subrouting method, sets the global property $baseRoute, calls the callable and resets the property again
+     *
+     * @param $group
+     * @param Closure $handler
+     */
+    public static function group($group, Closure $handler) {
+        if (!is_string($group)) {
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode([
+                "error" => "Group definition needs to be a string, also preceded by a slash(/)."
+            ]);
+            exit();
+        }
+        self::$baseRoute = $group;
+
+        call_user_func($handler);
+
+        self::$baseRoute = "";
+    }
+
+    /**
+     * Handles the parsed data by initializing the dispatcher
+     *
      * @param $input
-     * @return ClassNotFoundException[]|MethodNotCalledException[]|void
+     * @return ClassNotFoundException|MethodNotCalledException|void
      */
     private static function handle($input)
     {
