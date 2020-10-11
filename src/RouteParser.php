@@ -34,7 +34,10 @@ class RouteParser implements RouteParserInterface
         preg_match($regex, $uri, $matches);
 
         # Handle static routes
-        if (!empty($matches) && !isset($matches[1])) {
+        if (!empty($matches) &&
+            !isset($matches[1]) &&
+            # If main page
+            $matches[0] != "/") {
             $matches = preg_split('/[\/]/', $matches[0], NULL, PREG_SPLIT_NO_EMPTY);
         }
 
