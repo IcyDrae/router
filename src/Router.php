@@ -26,6 +26,7 @@ class Router
     private static array $request = [];
     private static int $dispatcherValue;
     private static string $baseRoute = "";
+    private static Closure $customHandler;
 
     /**
      * @param $method
@@ -103,6 +104,13 @@ class Router
 
             # If we're at the last position and still haven't found a route, it means this route is not defined in our application
             if ($pos == array_key_last(self::$routes) && self::$dispatcherValue == 0) {
+
+                # If the custom handler is set, trigger it and exit
+                if (!empty(self::$customHandler)) {
+                    call_user_func(self::$customHandler);
+                    exit();
+                }
+
                 header('Content-type:application/json;charset=utf-8');
                 http_response_code(404);
                 $e = new InvalidRouteException();
@@ -135,6 +143,16 @@ class Router
         call_user_func($handler);
 
         self::$baseRoute = "";
+    }
+
+    /**
+     * Custom 404 handler, used to override the default 404 handling defined in beforeHandle
+     *
+     * @param Closure $customHandler
+     */
+    public static function setNotFound(Closure $customHandler)
+    {
+        self::$customHandler = $customHandler;
     }
 
     /**
