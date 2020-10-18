@@ -4,7 +4,7 @@ When contributing to this repository, please open an issue first and explain the
 
 ### Setup
 
-- git clone https://github.com/ReardGjoni/router
+- ```git clone https://github.com/ReardGjoni/router```
 - create an empty PHP project with the prerequisites described [here](../README.md#prerequisites),
 - ```composer init``` 
 - add the following to the composer.json:
@@ -18,7 +18,7 @@ When contributing to this repository, please open an issue first and explain the
     ]
 ```
 
-- ```composer require rgjoni/router```
+- ```composer require rgjoni/router dev-master```
 
 Based on the above added lines this will symlink your local copy into the vendor folder
 and get you ready for development.
