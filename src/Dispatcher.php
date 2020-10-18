@@ -45,7 +45,7 @@ class Dispatcher implements DispatcherInterface
 
             $e = new MethodNotAllowedException();
             echo json_encode([
-                "exception" => $e->getMessage()
+                "error" => $e->getMessage()
             ]);
             exit();
         }
