@@ -2,7 +2,7 @@
 ![license](https://img.shields.io/apm/l/vim-mode)
 ![release](https://img.shields.io/github/v/release/reardgjoni/router)
 ![last-commit](https://img.shields.io/github/last-commit/reardgjoni/router/master)
-
+![packagist](https://img.shields.io/packagist/v/rgjoni/router)
 # Router
 
 This is a small routing package with a focus in separation of concern and logical modularity while keeping the implementation simple enough.
@@ -21,6 +21,10 @@ quickly turned into a big learning experience on OO and the HTTP specification.
 7. [Errors](#error-handling)<br>
 8. [Acknowledgements](#acknowledgements)<br>
 9. [Contributing](#contributing)<br>
+
+#### Installation
+
+``` composer require rgjoni/router ```
 
 ### Namespace
 
