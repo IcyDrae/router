@@ -19,9 +19,9 @@ class RouteParser implements RouteParserInterface
     public function parse(string $route, string $uri)
     {
         # Base route parsing pattern
-        $allowedCharacters = "[a-zA-Z0-9\_]+";
+        $allowedCharacters = "[a-zA-Z0-9\-_]+";
 
-        if (preg_match("/[^-:\/a-zA-Z\d]/", $uri, $matches)) {
+        if (preg_match("/[^-_:\/a-zA-Z\d]/", $uri, $matches)) {
             return self::NOT_ALLOWED_CHARS;
         }
 
