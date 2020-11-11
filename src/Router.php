@@ -27,6 +27,7 @@ class Router
     private static int $dispatcherValue;
     private static string $baseRoute = "";
     private static Closure $customHandler;
+    private static array $subRoute;
 
     /**
      * @param $method
@@ -36,7 +37,12 @@ class Router
     public static function __callStatic($method, $handler)
     {
         if (!empty(self::$baseRoute)) {
-            $handler[0] = self::$baseRoute . "/" . $handler[0];
+            if (preg_match("/\//", $handler[0])) {
+                self::$subRoute["route"] = $handler[0] = self::$baseRoute . $handler[0];
+            } else {
+                self::$subRoute["route"] = $handler[0];
+                self::$subRoute["error"] = true;
+            }
         }
 
         array_push(self::$methods, $method);
@@ -75,6 +81,18 @@ class Router
 
         foreach (self::$routes as $route) {
             self::filterRequest();
+
+            # Quickfix
+            # Need to detail the logic more, collect the route and find out where the error actually took place
+            if (self::$subRoute["error"]) {
+                header('Content-type:application/json;charset=utf-8');
+                http_response_code(400);
+                echo json_encode([
+                    "error" => "Group definition and all it's subroutes need to be preceded by a slash."
+                ]);
+                exit();
+            }
+
             # Pass the route to the RouteCollector- will return it parsed as an array
             $collector = new RouteCollector;
             self::$parsed = $collector->addRoute($route, self::$request["uri"]);
@@ -134,7 +152,7 @@ class Router
         if (!is_string($group)) {
             header('Content-type:application/json;charset=utf-8');
             echo json_encode([
-                "error" => "Group definition needs to be a string, also preceded by a slash(/)."
+                "error" => "Group definition needs to be a string, also preceded by a slash."
             ]);
             exit();
         }

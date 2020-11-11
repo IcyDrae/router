@@ -123,7 +123,7 @@ When needed, bundling routes together for specific sections is easily implemente
 Subroutes MUST be declared using the group method and placed inside a
 callback function- the below example will build the expected routes(eg. "/admin/settings").
 
-The group name MUST be preceded by a slash(/).
+The group name MUST be preceded by a slash(/), as well as the subroutes(in this example ``` settings ``` etc).
 
 ```php
 use Gjoni\Router\Router;
