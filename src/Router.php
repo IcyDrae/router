@@ -156,7 +156,7 @@ class Router
             ]);
             exit();
         }
-        self::$baseRoute = $group;
+        self::$baseRoute .= $group;
 
         call_user_func($handler);
 

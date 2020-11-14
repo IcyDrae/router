@@ -136,6 +136,8 @@ Router::group("/admin", function() {
 });
 ```
 
+Nested subrouting is also possible, the groups will then just append to each other(``` /group1/group2/route ```).
+
 ### Handling
 
 As mentioned above, this router supports two types of handling:
