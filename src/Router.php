@@ -84,7 +84,7 @@ class Router
 
             # Quickfix
             # Need to detail the logic more, collect the route and find out where the error actually took place
-            if (self::$subRoute["error"]) {
+            if (!empty(self::$subRoute["error"])) {
                 header('Content-type:application/json;charset=utf-8');
                 http_response_code(400);
                 echo json_encode([
@@ -97,7 +97,7 @@ class Router
             $collector = new RouteCollector;
             self::$parsed = $collector->addRoute($route, self::$request["uri"]);
 
-            if (self::$parsed["error"]) {
+            if (!empty(self::$parsed["error"])) {
                 header('Content-type:application/json;charset=utf-8');
                 http_response_code(400);
                 echo self::$parsed;
